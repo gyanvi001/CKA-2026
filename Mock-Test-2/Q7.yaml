@@ -1,0 +1,17 @@
+# Create a static pod on node01 called nginx-critical with the image nginx. Make sure that it is recreated/restarted automatically in case of a failure.
+# For example, use /etc/kubernetes/manifests as the static Pod path.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-critical
+spec:
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  containers:
+    - name: web
+      image: nginx
+      ports:
+        - name: web
+          containerPort: 80
+          protocol: TCP
