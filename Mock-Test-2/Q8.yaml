@@ -1,0 +1,23 @@
+# Create a Horizontal Pod Autoscaler with name backend-hpa for the deployment named backend-deployment in the backend namespace with the webapp-hpa.yaml file located under the root folder.
+# Ensure that the HPA scales the deployment based on memory utilization, maintaining an average memory usage of 65% across all pods.
+# Configure the HPA with a minimum of 3 replicas and a maximum of 15.
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-hpa
+  namespace: backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-deployment
+  minReplicas: 3
+  maxReplicas: 15
+  metrics:
+   - type: Resource
+     resource:
+        name: memory
+        target:
+            type: Utilization
+            averageUtilization: 65
