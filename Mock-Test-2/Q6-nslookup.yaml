@@ -1,0 +1,16 @@
+# Create an nginx pod named nginx-resolver using the nginx image and expose it internally using a ClusterIP service called nginx-resolver-service.
+
+# From within the cluster, verify:
+
+# DNS resolution of the service name
+
+# Network reachability of the pod using its IP address
+
+# Use the busybox:1.28 image to perform the lookups.
+
+# Save the service DNS lookup output to /root/CKA/nginx.svc and the pod IP lookup output to /root/CKA/nginx.pod.
+k run nginx-resolver --image=nginx
+
+k expose pod nginx-resolver --name=nginx-resolver-service --port=80 --target-port=80 --type=ClusterIP
+k run nslookup-test --image=busybox:1.28 --rm -it --restart=Never -- nslookup nginx-resolver-service > /root/CKA/nginx.svc
+k run nslookup-test --image=busybox:1.28 --rm -it --restart=Never -- nslookup <POD-IP> > /root/CKA/nginx.pod
