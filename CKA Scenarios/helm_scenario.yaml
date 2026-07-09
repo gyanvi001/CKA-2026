@@ -1,0 +1,44 @@
+# Install and manage Helm charts
+# Upgrade an application with custom configurations via Helm
+# Perform rollback when issues occur
+# Troubleshooting Helm releases
+
+helm version
+help repo list
+#Add nginx helm repo in the list
+helm repo add nginx-stable https://helm.nginx.com/stable
+# Update the repository to fetch the latest chart information:
+helm repo update
+# Search for available nginx charts:
+helm search repo nginx
+# Get detailed information about the nginx-ingress chart:
+helm show chart nginx-stable/nginx-ingress
+# View the default values for this chart:
+helm show values nginx-stable/nginx-ingress
+# List the configured repositories:
+helm repo list
+
+
+#####################################
+###Install the helm chart############
+#####################################
+
+kubectl create namespace nnginx-ingress
+helm install nginx-stable/nginx-ingress \
+--namspace nginx-ingree \
+--set controller.service.type=NodePort
+--set controller.service.httpPort.nodePort=30080 \
+--set controller.service.httpsPort.nodePort=30443
+#Check helm release status
+helm status my-nginx-ingress -n nginx-ingress
+helm ls -A
+helm history my-nginx-ingress -n nginx-ingress
+#View K8s generated manifest file
+helm get manifest my-nginx-ingress -n nginx-ingress
+
+###################################################
+#Upgrade the release with the new Custom Value
+###################################################
+cat /root/nginx-values.yaml
+
+
