@@ -40,5 +40,44 @@ helm get manifest my-nginx-ingress -n nginx-ingress
 #Upgrade the release with the new Custom Value
 ###################################################
 cat /root/nginx-values.yaml
+helm upgrade my-nginx-ingress nginx-stable/nginx-ingress \
+  --namespace nginx-ingress \
+  --values /root/nginx-values.yaml
+
+helm upgrade my-nginx-ingress nginx-stable/nginx-ingress \
+  --namespace nginx-ingress \
+  --values /root/nginx-values.yaml \
+  --set controller.service.annotations."service\.kubernetes\.io/load-balancer-source-ranges"="10.0.0.0/8"
+# Check the release status and history:
+helm status my-nginx-ingress -n nginx-ingress
+helm history my-nginx-ingress -n nginx-ingress
+# Verify the pod count has changed:
+kubectl get pods -n nginx-ingress
+# Check the resource configuration:
+kubectl describe deployment -n nginx-ingress
+
+############################################
+#Step 4: Rollback and Troubleshoot
+#############################################
+#Create problamatic upgrade
+helm upgrade my-nginx-ingress nginx-stable/nginx-ingress \
+  --namespace nginx-ingress \
+  --set controller.image.tag="invalid-tag" \
+  --set controller.replicaCount=5
+
+
+helm history my-nginx-ingress -n nginx-ingress
+# Rollback to the previous working revision (revision 3):
+helm rollback my-nginx-ingress 3 -n nginx-ingress
+# Check that the rollback was successful:
+helm status my-nginx-ingress -n nginx-ingress
+helm history my-nginx-ingress -n nginx-ingress
+# Verify pods are healthy again:
+kubectl get pods -n nginx-ingress
+# Get values for the current release:
+helm get values my-nginx-ingress -n nginx-ingress
+# Get all information about the release:
+helm get all my-nginx-ingress -n nginx-ingress
+
 
 
