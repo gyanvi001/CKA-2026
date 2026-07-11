@@ -3,3 +3,6 @@ kubectl api-resources > resources.csv
 
 # List the services on your Linux operating system that are associated with Kubernetes. Save the output to a file named services.csv.
 sudo systemctl list-unit-files --type service -all | grep kube > service.csv
+
+#Kubelet status
+sudo systemctl status kubelet > /tmp/kubelet-status.txt
