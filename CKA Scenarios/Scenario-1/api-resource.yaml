@@ -1,0 +1,2 @@
+#Command to list all the api-resouces
+kubectl api-resources > resources.csv
