@@ -1,0 +1,25 @@
+# Fix the error by adding the PORT environment variable to the container. 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      containers:
+      - name: go-app
+        image: your-dockerhub-username/go-app:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+
+
