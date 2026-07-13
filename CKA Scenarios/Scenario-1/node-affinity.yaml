@@ -1,0 +1,40 @@
+# In this scenario, you'll practice using node affinity in Kubernetes to control where pods are scheduled.
+
+# Node affinity allows you to constrain which nodes a pod can be scheduled on based on node labels. There are two types:
+
+# Required (requiredDuringSchedulingIgnoredDuringExecution ) — the pod must be placed on a matching node
+# Preferred (preferredDuringSchedulingIgnoredDuringExecution ) — the scheduler tries to place the pod on a matching node, but will still schedule it elsewhere if none match
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: data-processor
+  namespace: production
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disk
+            operator: In
+            values:
+            - ssd  
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: zone
+            operator: In
+            values:
+            - west
+  containers:
+  - name: data-processor
+    image: nginx:1.25
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
