@@ -38,3 +38,14 @@ spec:
       limits:
         memory: "128Mi"
         cpu: "500m"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-logging
+spec:
+  containers:
+  - name: main
+    image: busybox
+    args: [/bin/sh, -c, 'while true; do echo $(date); sleep 1; done']
