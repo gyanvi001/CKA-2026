@@ -76,3 +76,36 @@ spec:
     - name: varlog
       emptyDir: {}
 
+---
+# Create a deployment named "mysql" that uses the image "mysql:8".
+
+# View the deployment and pod, and find out why it's not running
+
+# Fix the deployment in order to get the pod in a running state.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mysql
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:8
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password123
+        resources: {}
+status: {}
+
