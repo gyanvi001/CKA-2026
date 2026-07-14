@@ -1,0 +1,69 @@
+# Create a complete Kustomize setup and apply it using kubectl apply -k .
+
+# Build a base with a Deployment and Service for web .
+# Create a production overlay that adds labels, suffixes, and patches replicas/image.
+# Apply the overlay with kubectl apply -k and verify the resulting resources.
+
+- bash: |
+    mkdir -p kustomize-demo/base
+    mkdir -p kustomize-demo/overlays/prod
+    cat <<'EOF_BASE_DEP' > kustomize-demo/base/deployment.yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: web
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: web
+      template:
+        metadata:
+          labels:
+            app: web
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:1.25
+            ports:
+            - containerPort: 80
+    EOF_BASE_DEP
+    cat <<'EOF_BASE_SVC' > kustomize-demo/base/service.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: web
+    spec:
+      selector:
+        app: web
+      ports:
+      - port: 80
+        targetPort: 80
+    EOF_BASE_SVC
+    cat <<'EOF_BASE_K' > kustomize-demo/base/kustomization.yaml
+    resources:
+      - deployment.yaml
+      - service.yaml
+    EOF_BASE_K
+    cat <<'EOF_OVERLAY_K' > kustomize-demo/overlays/prod/kustomization.yaml
+    resources:
+      - ../../base
+    nameSuffix: -prod
+    labels:
+      - pairs:
+          env: prod
+    patches:
+      - target:
+          kind: Deployment
+          name: web
+        patch: |
+          - op: replace
+            path: /spec/replicas
+            value: 3
+          - op: replace
+            path: /spec/template/spec/containers/0/image
+            value: nginx:1.25-alpine
+    EOF_OVERLAY_K
+    kubectl apply -k kustomize-demo/overlays/prod
+    kubectl get deploy,svc -l env=prod
+          
