@@ -46,3 +46,5 @@ commonLabels:
   team: platform
 EOF_K
 
+kubectl apply -k kustomize-common-labels/base
+kubectl get deploy,svc -l team=platform -o custom-columns=KI
